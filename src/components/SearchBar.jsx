@@ -1,3 +1,5 @@
+import { onMount } from "solid-js";
+
 export default function SearchBar() {
   let formRef;
   let searchRef;
