@@ -11,7 +11,7 @@ export default function WeTube() {
     () => params.videoId,
     (videoId) =>
       axios
-        .get(`http://localhost:2000/videos`, {
+        .get(`https://we-tube-server.colman-delaroziere.repl.co/videos`, {
           params: {
             videoId,
           },
@@ -45,6 +45,11 @@ export default function WeTube() {
 
           (function animate() {
             if (!$this.paused && !$this.ended) {
+              videoRef.style.x =
+                videoShadowRef.width / 2 - videoRef.clientWidth / 2;
+              videoRef.style.y =
+                videoShadowRef.height / 2 - videoRef.clientHeight / 2;
+
               videoShadowCtx.clearRect(
                 0,
                 0,
@@ -60,9 +65,6 @@ export default function WeTube() {
                 videoRef.clientHeight
               );
 
-              videoShadowCtx.filter =
-                "blur(70px) saturate(200%) brightness(75%)";
-
               requestAnimationFrame(animate);
             }
           })();
@@ -74,8 +76,6 @@ export default function WeTube() {
 
   return (
     <>
-      {/* <div class="bg-white w-44 h-10 absolute top-10"></div> */}
-
       <Show
         when={videoInfo()}
         fallback={
@@ -105,16 +105,20 @@ export default function WeTube() {
           controls
           poster={videoInfo().videoDetails.thumbnails.pop().url}
           id="video"
-          class="absolute rounded-xl"
+          class="absolute rounded-xl z-50"
         >
           {videoInfo().formats.map((format) => (
             <source
               type={format.mimeType.split(";").shift()}
-              src={format.url}
+              src={`https://we-tube-server.colman-delaroziere.repl.co/proxy/${format.url}`}
             />
           ))}
         </video>
-        <canvas ref={videoShadowRef} id="canvas"></canvas>
+
+        <canvas
+          style="filter: blur(70px) saturate(200%) brightness(75%);"
+          ref={videoShadowRef}
+        ></canvas>
       </Show>
     </>
   );
